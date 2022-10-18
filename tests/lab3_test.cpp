@@ -5,6 +5,8 @@
 
 #include <chrono>
 
+const int THREE = 3;
+
 namespace {
     TMatrix GenerateMatrix(int n, int m) {
         TMatrix result(n, std::vector<double>(m));
@@ -73,7 +75,7 @@ TEST(ThirdLabTests, SingleThreadYieldsCorrectResults) { // проверка пр
 TEST(ThirdLabTest, ThreadConfigurations) { // проверка, что 1 тред считает также как и много тредов
     auto performTestForGivenSize = [](int n, int m, int maxThreadCount, int cycle) {
         auto m1 = GenerateMatrix(n, m);
-        auto m2 = GenerateMatrix(3, 3);
+        auto m2 = GenerateMatrix(THREE, THREE);
         auto result = MatrixConvolution(m1, m2, 1, cycle);
 
         for(int i = 2; i < maxThreadCount; ++i) {
@@ -90,7 +92,7 @@ TEST(ThirdLabTest, ThreadConfigurations) { // проверка, что 1 тре�
 TEST(ThirdLabTest, PerfomanceTest) { // проверка среднего времени работы одного и нескольких тредов
     auto getAvgTime = [](int threadCount) {
         auto m1 = GenerateMatrix(300, 300);
-        auto m2 = GenerateMatrix(3, 3);
+        auto m2 = GenerateMatrix(THREE, THREE);
 
         constexpr int runsCount = 10;
 

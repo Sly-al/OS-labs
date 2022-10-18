@@ -10,45 +10,45 @@
 
 using namespace std;
 
-struct Data {
+struct TData {
     
     vector<vector<double> > &mas1;
     vector<vector<double> > &mas2;
     vector<vector<double> > &res1;
 
-    int thread_num;
-    int thread_count;
+    int threadNum;
+    int threadCount;
 };
 
 void *MatrixMult(void *args){
 
-    vector<vector<double>>&mas1 = ((Data *)args)->mas1;
-    vector<vector<double>>&mas2 = ((Data *)args)->mas2;
-    vector<vector<double>>&res1 = ((Data *)args)->res1;
+    vector<vector<double>>&mas1 = ((TData *)args)->mas1;
+    vector<vector<double>>&mas2 = ((TData *)args)->mas2;
+    vector<vector<double>>&res1 = ((TData *)args)->res1;
 
-    int thread_num = ((Data *)args)->thread_num;  // номер потока
-    int th_count = ((Data *)args)->thread_count;  // количество потоков
-    int cols = mas1[0].size();
-    int rows = mas1.size();
+    int threadNum = ((TData *)args)->threadNum;  // номер потока
+    int thCount = ((TData *)args)->threadCount;  // количество потоков
+    int cols = isize(mas1[0]);
+    int rows = isize(mas1);
     int dir[3] = {-1, 0, 1};
 
-     for (int th_row = thread_num; th_row < rows; th_row += th_count) {
+     for (int thRow = threadNum; thRow < rows; thRow += thCount) {
         
-        for (int th_col = 0; th_col < cols; th_col++) {
+        for (int thCol = 0; thCol < cols; thCol++) {
 
             double div = 0.0;
-            double new_val = 0.0;
+            double newVal = 0.0;
 
             for (int i = 0; i < 3; ++i) {
                 for (int j = 0; j < 3; ++j) {
                     div += mas2[i][j];
-                    if ( (th_row + dir[i] >= 0) && (th_row + dir[i] < rows) &&
-                    (th_col + dir[j] >= 0) && (th_col + dir[j] < cols) ) {
-                        new_val += mas1[th_row + dir[i]][th_col + dir[j]] * mas2[j][i];
+                    if ( (thRow + dir[i] >= 0) && (thRow + dir[i] < rows) &&
+                    (thCol + dir[j] >= 0) && (thCol + dir[j] < cols) ) {
+                        newVal += mas1[thRow + dir[i]][thCol + dir[j]] * mas2[j][i];
                     }
                 }
             }
-            res1[th_row][th_col] = new_val/div;
+            res1[thRow][thCol] = newVal/div;
         }
 
     }
@@ -57,23 +57,23 @@ void *MatrixMult(void *args){
 }
 
 
-TMatrix MatrixConvolution(TMatrix mas1, TMatrix mas2, int max_thread, int loop){
+TMatrix MatrixConvolution(TMatrix mas1, TMatrix mas2, int maxThread, int loop){
 
-    int N = mas1.size();
-    int M = mas1[0].size();
+    int n = isize(mas1);
+    int m = isize(mas1[0]);
 
-    TMatrix res1(N, vector<double>(M,0));
+    TMatrix res1(n, vector<double>(m,0));
 
-    vector<Data> data = vector<Data>(max_thread,{mas1,mas2,res1,0,0});
+    vector<TData> data = vector<TData>(maxThread,{mas1,mas2,res1,0,0});
     
-    vector<pthread_t> threads = vector<pthread_t>(max_thread);
+    vector<pthread_t> threads(maxThread);
 
-    for(int k=0; k < loop; ++k){
-
-        for(int p = 0; p < max_thread; p++){
-            data[p].thread_count = max_thread;
-            data[p].thread_num = p;
-            if(p >= N*M){
+    for(int k = 0; k < loop; ++k){
+        
+        for(int p = 0; p < maxThread; p++){
+            data[p].threadCount = maxThread;
+            data[p].threadNum = p;
+            if(p >= n*m){
                 break;
             }
 
@@ -84,7 +84,7 @@ TMatrix MatrixConvolution(TMatrix mas1, TMatrix mas2, int max_thread, int loop){
         }
 
         //join
-        for(int i = 0; i < max_thread; i++) {
+        for(int i = 0; i < maxThread; i++) {
             if (pthread_join(threads[i],NULL) != 0) {
                 cout << "Can't wait for thread\n";
             }
