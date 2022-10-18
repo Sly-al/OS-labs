@@ -57,7 +57,7 @@ void *MatrixMult(void *args){
 }
 
 
-TMatrix MatrixConvolution(TMatrix mas1, TMatrix mas2, int maxThread, int loop){
+TMatrix MatrixConvolution(TMatrix& mas1, TMatrix& mas2, int maxThread, int loop){
 
     int n = isize(mas1);
     int m = isize(mas1[0]);

@@ -10,16 +10,16 @@
 using namespace std;
 
 int main(){
-    int N, M, max_thread, loop;
+    int n, m, maxThread, loop;
     
-    cin >> N >> M >> max_thread >> loop;
+    cin >> n >> m >> maxThread >> loop;
     
-    TMatrix mas1(N, vector<double>(M,0));
+    TMatrix mas1(n, vector<double>(m,0));
     TMatrix mas2(3, vector<double>(3,0));
 
     double x;
-    for(int i = 0; i < N; ++i){
-        for(int j = 0; j < M; ++j){
+    for(int i = 0; i < n; ++i){
+        for(int j = 0; j < m; ++j){
             cin >> x;
             mas1[i][j] = x;
         }
@@ -32,11 +32,11 @@ int main(){
         }
     }
 
-    TMatrix result = MatrixConvolution(mas1, mas2, max_thread, loop);
+    TMatrix result = MatrixConvolution(mas1, mas2, maxThread, loop);
 
     cout << " result \n";
-    for(int i = 0; i < N; ++i){
-        for(int j = 0;j < M; ++j){
+    for(int i = 0; i < n; ++i){
+        for(int j = 0;j < m; ++j){
             cout << result[i][j] << " ";
             
         }
