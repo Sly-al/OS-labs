@@ -39,8 +39,8 @@ void *MatrixMult(void *args){
             double div = 0.0;
             double newVal = 0.0;
 
-            for (int i = 0; i < 3; ++i) {
-                for (int j = 0; j < 3; ++j) {
+            for (int i = 0; i < kernelMatrixSize; ++i) {
+                for (int j = 0; j < kernelMatrixSize; ++j) {
                     div += mas2[i][j];
                     if ( (thRow + dir[i] >= 0) && (thRow + dir[i] < rows) &&
                     (thCol + dir[j] >= 0) && (thCol + dir[j] < cols) ) {

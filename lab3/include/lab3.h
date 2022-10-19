@@ -4,8 +4,10 @@
 
 using namespace std;
 
+constexpr int kernelMatrixSize = 3;
+
 using TMatrix = vector<vector<double>>;
 
-TMatrix MatrixConvolution( TMatrix& mas1, TMatrix& mas2, int max_thread, int loop);
+TMatrix MatrixConvolution( TMatrix& mas1, TMatrix& mas2, int maxThread, int loop);
 
 #endif
