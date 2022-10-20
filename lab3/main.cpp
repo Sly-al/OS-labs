@@ -15,7 +15,7 @@ int main(){
     cin >> n >> m >> maxThread >> loop;
     
     TMatrix mas1(n, vector<double>(m,0));
-    TMatrix mas2(kernelMatrixSize, vector<double>(kernelMatrixSize,0));
+    TMatrix mas2(KERNEL_MATRIX_SIZE, vector<double>(KERNEL_MATRIX_SIZE,0));
 
     double x;
     for(int i = 0; i < n; ++i){
@@ -25,8 +25,8 @@ int main(){
         }
     }
 
-    for(int i = 0; i < kernelMatrixSize; ++i){
-        for(int j = 0;j < kernelMatrixSize; ++j){
+    for(int i = 0; i < KERNEL_MATRIX_SIZE; ++i){
+        for(int j = 0;j < KERNEL_MATRIX_SIZE; ++j){
             cin >> x;
             mas2[i][j] = x;
         }

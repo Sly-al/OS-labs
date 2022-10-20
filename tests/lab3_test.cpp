@@ -5,8 +5,6 @@
 
 #include <chrono>
 
-const int THREE = 3;
-
 namespace {
     TMatrix GenerateMatrix(int n, int m) {
         TMatrix result(n, std::vector<double>(m));
@@ -75,7 +73,7 @@ TEST(ThirdLabTests, SingleThreadYieldsCorrectResults) { // проверка пр
 TEST(ThirdLabTest, ThreadConfigurations) { // проверка, что 1 тред считает также как и много тредов
     auto performTestForGivenSize = [](int n, int m, int maxThreadCount, int cycle) {
         auto m1 = GenerateMatrix(n, m);
-        auto m2 = GenerateMatrix(THREE, THREE);
+        auto m2 = GenerateMatrix(KERNEL_MATRIX_SIZE, KERNEL_MATRIX_SIZE);
         auto result = MatrixConvolution(m1, m2, 1, cycle);
 
         for(int i = 2; i < maxThreadCount; ++i) {
@@ -83,7 +81,7 @@ TEST(ThirdLabTest, ThreadConfigurations) { // проверка, что 1 тре�
         }
     };
 
-    performTestForGivenSize(3, 3, 2, 1);
+    performTestForGivenSize(KERNEL_MATRIX_SIZE, KERNEL_MATRIX_SIZE, 2, 1);
     performTestForGivenSize(10, 10, 8, 3);
     performTestForGivenSize(100, 100, 10, 7);
     performTestForGivenSize(300, 300, 4, 8);
@@ -91,8 +89,8 @@ TEST(ThirdLabTest, ThreadConfigurations) { // проверка, что 1 тре�
 
 TEST(ThirdLabTest, PerfomanceTest) { // проверка среднего времени работы одного и нескольких тредов
     auto getAvgTime = [](int threadCount) {
-        auto m1 = GenerateMatrix(300, 300);
-        auto m2 = GenerateMatrix(THREE, THREE);
+        auto m1 = GenerateMatrix(300, 350);
+        auto m2 = GenerateMatrix(KERNEL_MATRIX_SIZE, KERNEL_MATRIX_SIZE);
 
         constexpr int runsCount = 10;
 

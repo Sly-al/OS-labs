@@ -39,8 +39,8 @@ void *MatrixMult(void *args){
             double div = 0.0;
             double newVal = 0.0;
 
-            for (int i = 0; i < kernelMatrixSize; ++i) {
-                for (int j = 0; j < kernelMatrixSize; ++j) {
+            for (int i = 0; i < KERNEL_MATRIX_SIZE; ++i) {
+                for (int j = 0; j < KERNEL_MATRIX_SIZE; ++j) {
                     div += mas2[i][j];
                     if ( (thRow + dir[i] >= 0) && (thRow + dir[i] < rows) &&
                     (thCol + dir[j] >= 0) && (thCol + dir[j] < cols) ) {
@@ -57,7 +57,7 @@ void *MatrixMult(void *args){
 }
 
 
-TMatrix MatrixConvolution(TMatrix& mas1, TMatrix& mas2, int maxThread, int loop){
+TMatrix MatrixConvolution(TMatrix mas1, TMatrix mas2, int maxThread, int loop){
 
     int n = isize(mas1);
     int m = isize(mas1[0]);
