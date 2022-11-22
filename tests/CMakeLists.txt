@@ -28,3 +28,11 @@ target_link_libraries(lab3_test PRIVATE GTest::GTest)
 target_include_directories(lab3_test PRIVATE ../lab3/include)
 
 add_test(lab3_test lab3_test)
+
+# LAB 4 tests
+add_executable(lab4_test lab4_test.cpp ../lab4/include/lab4.h ../lab4/src/lab4.c )
+
+target_link_libraries(lab4_test PRIVATE GTest::GTest)
+target_include_directories(lab4_test PRIVATE ../lab4/include)
+
+add_test(lab4_test lab4_test)
