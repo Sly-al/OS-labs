@@ -5,8 +5,6 @@
 #include <fstream>
 #include <memory>
 
-#include <unistd.h>
-
 namespace fs = std::filesystem;
 
 extern "C" {
