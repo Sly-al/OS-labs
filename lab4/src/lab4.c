@@ -75,7 +75,7 @@ int ParentRoutine(FILE* stream)
 
         if (dup2(fout, 1) == -1) {
             perror("Child: dup error");
-            exit(EXIT_FAILURE);
+            return EXIT_FAILURE;
         }
         while (1)
         {
