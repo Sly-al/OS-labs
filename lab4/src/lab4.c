@@ -80,13 +80,8 @@ int ParentRoutine(FILE* stream)
         while (1)
         {
             sem_wait(sem1);
-            int n = 0;
-            memcpy(&n, in, sizeof(long long));
-            if (n == 0){
-                break;
-            }
             long long num;
-            memcpy(&num, in, n);
+            memcpy(&num, in, sizeof(long long));
             if (IsPrime(num) == 1)
             {
                 int k = 404;
