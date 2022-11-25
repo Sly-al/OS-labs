@@ -10,10 +10,6 @@
 
 #include "lab4.h"
 
-const int MAXLENGTH = 100;
-const int SIZE = MAXLENGTH + sizeof(int);
-const int ZERO = 0;
-
 int IsPrime(long long n) {
     if (n <= 1) {
         return 1;
@@ -28,6 +24,9 @@ int IsPrime(long long n) {
 
 int ParentRoutine(FILE* stream)
 {
+    const int MAXLENGTH = 100;
+    const int SIZE = MAXLENGTH + sizeof(int);
+    const int ZERO = 0;
     unlink("file1");
     unlink("file2");
     int  file1 = open("file1", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
