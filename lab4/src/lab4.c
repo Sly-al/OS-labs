@@ -81,11 +81,11 @@ int ParentRoutine(FILE* stream)
         {
             sem_wait(sem1);
             long long num;
-            memcpy(&num, in, SIZE);
+            memcpy(&num, in, sizeof(long long));
             if (IsPrime(num) == 1)
             {
                 int k = 404;
-                memcpy(ans, &k, SIZE);
+                memcpy(ans, &k, sizeof(long long));
                 sem_post(sem2);
                 munmap(in, SIZE);
                 munmap(ans, SIZE);
@@ -94,7 +94,8 @@ int ParentRoutine(FILE* stream)
             }
             else
             {
-                printf("%lld",num);
+                printf("%lld\n",num);
+                fflush(stdout);
                 sem_post(sem2);
             }
         }
@@ -120,7 +121,7 @@ int ParentRoutine(FILE* stream)
         while ( n > 0)
         {
             number = atol(str);
-            memcpy(out, &number, SIZE);
+            memcpy(out, &number, sizeof(long long));
             sem_post(sem1);
             sem_wait(sem2);
             int k;
