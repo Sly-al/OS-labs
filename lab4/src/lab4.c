@@ -24,26 +24,24 @@ int IsPrime(long long n) {
 
 int ParentRoutine(FILE* stream)
 {
-    const int MAXLENGTH = 100;
-    const int SIZE = MAXLENGTH + sizeof(int);
-    const int ZERO = 0;
+    const int SIZE = sizeof(long long);
     unlink("file1");
     unlink("file2");
     int  file1 = open("file1", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     int  file2 = open("file2", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    if ( file1 == -1 ||  file2 == -1) {
+    if ( file1 == -1 ||  file2 == -1 ) {
         perror("open error");
         return EXIT_FAILURE;
     }
-    if ( ftruncate(file1, SIZE - 1) == -1 ) {
+    if ( ftruncate(file1, SIZE) == -1 ) {
         perror("ftruncate");
         return EXIT_FAILURE;
     }
-    if ( ftruncate(file2, SIZE - 1) == -1 ) {
+    if ( ftruncate(file2, SIZE) == -1 ) {
         perror("ftruncate");
         return EXIT_FAILURE;
     }
-    
+
     sem_t* sem1 = sem_open("semaphore1", O_CREAT, S_IRUSR | S_IWUSR, 0);
     sem_t* sem2 = sem_open("semaphore2", O_CREAT, S_IRUSR | S_IWUSR, 0);
 
@@ -74,44 +72,40 @@ int ParentRoutine(FILE* stream)
             perror("open error");
             return EXIT_FAILURE;
         }
-        char* str = calloc(MAXLENGTH, sizeof(char));
-        if (str == NULL)
-        {
-            perror("calloc error");
-            return EXIT_FAILURE;
+
+        if (dup2(fout, 1) == -1) {
+            perror("Child: dup error");
+            exit(EXIT_FAILURE);
         }
         while (1)
         {
             sem_wait(sem1);
             int n = 0;
-            memcpy(&n, in, sizeof(int));
+            memcpy(&n, in, sizeof(long long));
             if (n == 0){
                 break;
             }
-            memcpy(str, (void*)((char*)in + sizeof(int)), n);
-            long long num = atol(str); 
+            long long num;
+            memcpy(&num, in, n);
             if (IsPrime(num) == 1)
             {
                 int k = 404;
-                memcpy(ans, &k, sizeof(int));
+                memcpy(ans, &k, sizeof(long long));
                 sem_post(sem2);
                 munmap(in, SIZE);
                 munmap(ans, SIZE);
                 close(fout);
-                free(str);
                 break;
             }
             else
             {
-                memcpy(ans, &ZERO, sizeof(int));
-                write(fout,(void*)((char*)in + sizeof(int)), n);
+                printf("%lld",num);
+                sem_post(sem2);
             }
-            sem_post(sem2);
         }
         munmap(in, SIZE);
         munmap(ans, SIZE);
         close(fout);
-        free(str);
     }
 
 // parent 
@@ -124,19 +118,14 @@ int ParentRoutine(FILE* stream)
             perror("mmap error");
             return EXIT_FAILURE;
         }
-        char* err = calloc(MAXLENGTH, sizeof(char));
-        if (err == NULL)
-        {
-            perror("calloc error");
-            return EXIT_FAILURE;
-        }
+        long long number;
         char* str;
         size_t s = 0;
         int n = getline(&str, &s, stream);
-        while (n > 0)
+        while ( n > 0)
         {
-            memcpy(out, &n, sizeof(int));
-            memcpy((void*)((char*)out + sizeof(int)), str, n);
+            number = atol(str);
+            memcpy(out, &number, sizeof(long long));
             sem_post(sem1);
             sem_wait(sem2);
             int k;
@@ -148,10 +137,9 @@ int ParentRoutine(FILE* stream)
             n = getline(&str, &s, stream);
         }
         kill(id, SIGKILL);
-        memcpy(out, &n, sizeof(int));
+        free(str);
         munmap(out, SIZE);
         munmap(ans, SIZE);
-        free(err);
         sem_close(sem1);
         sem_close(sem2);
         close(file1);
