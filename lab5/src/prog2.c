@@ -11,8 +11,6 @@ int main(){
     int n = 0;
     void* handle;
     handle  = dlopen(names[n], RTLD_LAZY);
-    // char*(*Translation)(long);
-    // void(*Sort)(int*, unsigned long);
     
     if (!handle){
         printf("dlopen error\n");
