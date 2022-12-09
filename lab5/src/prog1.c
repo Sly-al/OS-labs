@@ -30,19 +30,18 @@ int main(){
                 int* arr = malloc(size * sizeof(int));
                 printf("Start input:\n");
 
-                for (int i = 0; i < size; ++i){
+                for (unsigned long i = 0; i < size; ++i){
                     scanf("%d", arr + i);
                 }
 
                 printf("Sorted: \n");
-                int* ans = Sort(arr, size);
+                Sort(arr, size);
 
-                for (int i = 0; i < size; ++i){
-                    printf("%d ", ans[i]);
+                for (unsigned long i = 0; i < size; ++i){
+                    printf("%d ", arr[i]);
                 }
 
                 printf("\n");
-                free(ans);
                 free(arr);
                 break;
 

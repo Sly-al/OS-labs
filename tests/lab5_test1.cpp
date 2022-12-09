@@ -9,18 +9,6 @@ extern "C" {
 const int ELEMENTS = 20;
 const int TIMESTOTEST = 40;
 
-
-bool EqualRes(std::vector<int> &correctVector, int* p){
-
-    for(int i = 0; i < correctVector.size(); ++i){
-        if(correctVector[i] != *(p+i)){
-            return false;
-        }
-
-    }
-    return true;
-}
-
 void GenerateElements(std::vector<int> &correctVector){
 
     std::srand(std::time(nullptr));
@@ -52,14 +40,14 @@ TEST(FiveLabTests, Translationfirst) { // проверка правильнос�
 TEST(FiveLabTests, SortOfArray) { // проверка правильности работы функции
 
     for(int j = 0; j < TIMESTOTEST; ++j){
-        std::vector<int> correctVector(ELEMENTS);
-        int* p = &correctVector[0];
-        GenerateElements(correctVector);
-        int* res = Sort(p, ELEMENTS);
+        std::vector<int> genVector(ELEMENTS);
+        std::vector<int> correctVector;
+        int* p = &genVector[0];
+        GenerateElements(genVector);
+        correctVector.assign(genVector.begin(), genVector.end());
+        Sort(p, ELEMENTS);
         sort(correctVector.begin(), correctVector.end());
 
-        bool isSame = EqualRes(correctVector, res);
-        EXPECT_TRUE(isSame);
-        free(res);
+        EXPECT_TRUE(correctVector == genVector);
     }
 }

@@ -2,25 +2,25 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 
-const int NUMBEROFLYB = 2;
-const char* NAMES[] = {"./libdyn1.so", "./libdyn2.so"};
 
 int main(){
 
+    int numberOfLyb = 2;
+    char* names[] = {"./libdyn1.so", "./libdyn2.so"};
 
     int n = 0;
     void* handle;
-    handle  = dlopen(NAMES[n], RTLD_LAZY);
+    handle  = dlopen(names[n], RTLD_LAZY);
     char*(*Translation)(long);
-    int*(*Sort)(int*, unsigned long);
+    void(*Sort)(int*, unsigned long);
     
     if (!handle){
         printf("dlopen error\n");
         return -1;
     }
 
-    Translation = dlsym(handle, "Translation");
-    Sort = dlsym(handle, "Sort"); 
+    *(void **) (&Translation) = dlsym(handle, "Translation");
+    *(void **) (&Sort) = dlsym(handle, "Sort"); 
     int t;
     printf("0 - switch library 1 - translation, 2 - sort of array\n");
 
@@ -29,20 +29,20 @@ int main(){
         switch (t) {
             case 0:{
 
-                n = (n + 1) % NUMBEROFLYB;
+                n = (n + 1) % numberOfLyb;
 
                 if (dlclose(handle ) != 0){
                     perror("dlclose error");
                     return -1;
                 }
 
-                if (!(handle  = dlopen(NAMES[n], RTLD_LAZY))){
+                if (!(handle  = dlopen(names[n], RTLD_LAZY))){
                     printf("dlopen error\n");
                     return -1;
                 }
 
-                Translation = dlsym(handle , "Translation");
-                Sort = dlsym(handle , "Sort");
+                *(void **) (&Translation) = dlsym(handle , "Translation");
+                *(void **) (&Sort) = dlsym(handle , "Sort");
                 printf("Swithced\n");
                 break;
 
@@ -71,14 +71,13 @@ int main(){
                 }
 
                 printf("Sorted: \n");
-                int* ans = (*Sort)(arr, size);
+                (*Sort)(arr, size);
 
                 for (unsigned long i = 0; i < size; ++i){
-                    printf("%d ", ans[i]);
+                    printf("%d ", arr[i]);
                 }
 
                 printf("\n");
-                free(ans);
                 free(arr);
                 break;
 

@@ -36,10 +36,6 @@ char* Translation(long x){
     return str;   
 }
 
-int* Sort(int* array, unsigned long size) {
-    int* newArray;
-    newArray = (int*)malloc(sizeof(int)* size);
-    memcpy(newArray, array, sizeof(int)*size);
-    qsort(newArray, size, sizeof(int), Compare);
-    return newArray;
+void Sort(int* array, unsigned long size) {
+    qsort(array, size, sizeof(int), Compare);
 }

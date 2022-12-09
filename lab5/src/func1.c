@@ -39,18 +39,13 @@ char* Translation(long x){
     return str;
 }
 
-int* Sort(int* array, unsigned long size) {
-    int* newArray;
-    newArray = (int*)malloc(sizeof(int)* size);
-    memcpy(newArray, array, sizeof(int)*size);
+void Sort(int* array, unsigned long size) {
 
     for (unsigned long i = 0; i < size; ++i) {
         for (unsigned long j = 0; j < size - 1; ++j) {
-            if (newArray[j] > newArray[j + 1]) {
-                IntSwap(newArray + j, newArray + j + 1);
+            if (array[j] > array[j + 1]) {
+                IntSwap(array + j, array + j + 1);
             }
         }
     }
-
-    return newArray;
 }
