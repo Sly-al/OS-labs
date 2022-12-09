@@ -2,14 +2,14 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 
-const int NumberOfLyb = 2;
-const char* names[] = {"./libdyn1.so", "./libdyn2.so"};
+const int NUMBEROFLYB = 2;
+const char* NAMES[] = {"./libdyn1.so", "./libdyn2.so"};
 
 int main(){
 
     int n = 0;
     void* handle;
-    handle  = dlopen(names[n], RTLD_LAZY);
+    handle  = dlopen(NAMES[n], RTLD_LAZY);
     char*(*Translation)(long);
     int*(*Sort)(int*, unsigned long);
     
@@ -28,14 +28,14 @@ int main(){
         switch (t) {
             case 0:{
 
-                n = (n + 1) % NumberOfLyb;
+                n = (n + 1) % NUMBEROFLYB;
 
                 if (dlclose(handle ) != 0){
                     perror("dlclose error");
                     return -1;
                 }
 
-                if (!(handle  = dlopen(names[n], RTLD_LAZY))){
+                if (!(handle  = dlopen(NAMES[n], RTLD_LAZY))){
                     printf("dlopen error\n");
                     return -1;
                 }
