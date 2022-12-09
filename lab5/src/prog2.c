@@ -7,6 +7,7 @@ const char* NAMES[] = {"./libdyn1.so", "./libdyn2.so"};
 
 int main(){
 
+
     int n = 0;
     void* handle;
     handle  = dlopen(NAMES[n], RTLD_LAZY);
