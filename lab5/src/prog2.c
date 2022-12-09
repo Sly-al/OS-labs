@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <dlfcn.h>
 #include <stdlib.h>
-
+#include <lab5.h>
 
 int main(){
 
@@ -11,16 +11,22 @@ int main(){
     int n = 0;
     void* handle;
     handle  = dlopen(names[n], RTLD_LAZY);
-    char*(*Translation)(long);
-    void(*Sort)(int*, unsigned long);
+    // char*(*Translation)(long);
+    // void(*Sort)(int*, unsigned long);
     
     if (!handle){
         printf("dlopen error\n");
         return -1;
     }
 
-    *(void **) (&Translation) = dlsym(handle, "Translation");
-    *(void **) (&Sort) = dlsym(handle, "Sort"); 
+    TranslationType trans;
+    SortType sort;
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+        trans = (TranslationType)dlsym(handle, "Translation"); 
+        sort = (SortType)dlsym(handle, "Sort");
+    #pragma GCC diagnostic pop
+
     int t;
     printf("0 - switch library 1 - translation, 2 - sort of array\n");
 
@@ -41,8 +47,11 @@ int main(){
                     return -1;
                 }
 
-                *(void **) (&Translation) = dlsym(handle , "Translation");
-                *(void **) (&Sort) = dlsym(handle , "Sort");
+                #pragma GCC diagnostic push
+                #pragma GCC diagnostic ignored "-Wpedantic"
+                    trans = (TranslationType)dlsym(handle, "Translation"); 
+                    sort = (SortType)dlsym(handle, "Sort");
+                #pragma GCC diagnostic pop
                 printf("Swithced\n");
                 break;
 
@@ -52,7 +61,7 @@ int main(){
                 printf("Enter x = ");
                 int x;
                 scanf("%d", &x);
-                char* result = (*Translation)(x);
+                char* result = (*trans)(x);
                 printf("Translation is %s\n", result);
                 free(result);
                 break;
@@ -71,7 +80,7 @@ int main(){
                 }
 
                 printf("Sorted: \n");
-                (*Sort)(arr, size);
+                (*sort)(arr, size);
 
                 for (unsigned long i = 0; i < size; ++i){
                     printf("%d ", arr[i]);
