@@ -1,60 +1,51 @@
 #include <bits/stdc++.h>
-#include <cstdlib>
-// struct {
+// #include <graph.h>
 
+std::vector<bool> jobsCompleting(6);
 
+int u;
 
-// };
+struct Node {
+    int id;
+    int parentId;
+    std::string comToExec;
+    std::string arguments;
+    std::vector<int> childrenId;
+};
 
-
-// for executing programms
-// FILE *fp;
-//     char line[1000];
-//     std::string result;
-//     fp = popen("dir", "r");
-//     while (fgets(line, 1000, fp))
-//         result += line;
-//     std::cout << result;
-
-
-using graph = std::vector<std::vector<int> >;
-const int maxn = 1e5;
-std::vector<int> component(maxn); // тут будут номера компонент
-
-int flag = 0;
-int zam=0;
-bool dfs(int u, int prev, const graph & g, std::vector<int> & vizit){
-    if (vizit[u]==1){
-        flag = 1;
-        zam = u;
-        return true;
-    }
-    vizit[u] = 1;
-    for (int v: g[u]){
-           if ( v!= prev && dfs(v, u, g, vizit)){
-               if (u == zam){
-                   flag = 0;
-               }
-               return true;
-           }
-    }
-    return false;
+void addChild(std::vector<Node>& vectorOfNodes, int parentId, int childId, std::string comToExec){
+    vectorOfNodes[parentId].childrenId.push_back(childId);
+    vectorOfNodes[childId].parentId = parentId;
+    vectorOfNodes[childId].comToExec = comToExec;
 }
 
 int main(){
-    int n, m;
-    std::cin >> n >> m;
-    graph g(n);
-    for (int i = 0; i < m; ++i){
-        int u, v;
-        std::cin >> u >> v;
-        --u;
-		--v;
-        g[u].push_back(v); 
+    int amountThreads = 3;
+    std::vector<Node> vectorOfNodes(7);
+    std::vector<int> planning(7);
+    addChild(vectorOfNodes, 0,  2, "l");
+    addChild(vectorOfNodes, 0, 1, "v");
+    addChild(vectorOfNodes, 2, 3, "K");
+    for (int i = 1; i < vectorOfNodes.size(); ++i){
+        if(vectorOfNodes[i].childrenId.empty()){
+            planning[i] = 1;
+        }
     }
-	std::vector<int> vizit(n);
-	bool cycle = dfs(0,-1, g, vizit);
 
-	std::cout<< "Check = " << cycle << '\n';
-    return 0;
+    while(true) {
+        int countInWork = 0;
+        for (int i = 1; i < planning.size(); ++i){
+            if(planning[i] == 2){
+                countInWork++;
+            }
+        }
+        int dostup = amountThreads - countInWork;
+        for (int i = 1; i < planning.size() && dostup > 0; ++i){
+            if(planning[i] == 1){
+                dostup--;
+                //запуск 
+            }
+        }
+    }
+
 }
