@@ -84,26 +84,29 @@ void* ExecUtilits(void* args){
 }
 
 int main(){
-    int amountThreads = 3;
-    std::string fileJson = "data.json";
-    // std::cout<< "Input amount of threads and file with DAG\n";
-    // std::cin >> amountThreads >> fileJson;
+    int amountThreads;
+    std::string fileJson;
+    
+    std::cout<< "Input amount of threads and file with DAG\n";
+    std::cin >> amountThreads >> fileJson;
     JsonToVector(fileJson, vectorOfNodes, planning);
 
-    // int amountOfNodes = planning.size();
-
-    // MakeMatr(vectorOfNodes, matr);
-
-    // for(unsigned long i = 0; i < vectorOfNodes.size(); ++i){
-    //     for (unsigned long j = 0; j < vectorOfNodes[i].parentId.size(); ++j){
-    //         std::cout<< vectorOfNodes[i].parentId[j] << ' ';
-    //     }
-    //     std::cout<< '\n';
-    // }
-
     int amountOfNodes = planning.size();
+    graph matr(amountOfNodes);
+    for(int i = 0; i < amountOfNodes; ++i){
+        for (int j : vectorOfNodes[i].childId){
+            std::cout<< "I  = " << i << "J = " << j << '\n';
+            matr[i].push_back(j);
+            matr[j].push_back(i);
+        }
+        std::cout<< '\n';
+    }
+    if(!CheckOneComp(matr) || FindCycle(vectorOfNodes) ){
+        std::cout<< "There are cycle or more tnan one componet\n";
+        return 0;
+    }
 
-
+    // std::cout<< FindCycle(vectorOfNodes) << '\n';
 
     for (int i = 0; i < amountOfNodes - 1; ++i){
         if(vectorOfNodes[i].parentId.empty()){
@@ -111,10 +114,10 @@ int main(){
         }
     }
 
-    for(int i = 0; i < amountOfNodes; ++i){
-        std::cout << planning[i] << ' ';
-    }
-    std::cout << '\n';
+    // for(int i = 0; i < amountOfNodes; ++i){
+    //     std::cout << planning[i] << ' ';
+    // }
+    // std::cout << '\n';
 
     if (pthread_mutex_init(&mutex, NULL) != 0) {
         std::cout << "mutex init failed\n";
