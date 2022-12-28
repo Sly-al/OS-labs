@@ -1,0 +1,18 @@
+{
+    "Node0":
+    {
+    "childId" : "1",
+    "comToExec" : "ls"
+    },
+    "Node1":
+    {
+    "childId" : "2",
+    "comToExec" : "date"
+    },
+    "Node2":
+    {
+    "childId" : "0",
+    "comToExec" : "date"
+    }
+}
+

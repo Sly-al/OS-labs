@@ -1,10 +1,18 @@
-#include <bits/stdc++.h>
+#ifndef GRAPH_H
+#define GRAPH_H
 
-using graph = std::vector<std::vector<int> >;
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <set>
+#include "parser.h"
+
 const int maxn = 1e5;
-std::vector<int> component(maxn); 
-int flag = 0;
-int zam=0;
+std::vector<int> component(maxn);
+int n;
+std::vector<char> color;
+std::vector<int> parent;
+int cycle_start, cycle_end; 
 
 void DFS(int v, int num, const graph& matr) {
     component[v] = num;
@@ -13,11 +21,12 @@ void DFS(int v, int num, const graph& matr) {
             DFS(u, num, matr);
 		}
 	}
+	return;
 }
 
 bool CheckOneComp(const graph& matr){
 	int num = 0;
-	for (int v = 0; v < matr.size(); v++){
+	for (unsigned long v = 0; v < matr.size(); v++){
     	if (!component[v]){
         	DFS(v, ++num, matr);
 		}
@@ -25,21 +34,38 @@ bool CheckOneComp(const graph& matr){
 	return num == 1;
 }
 
-
-bool FindCycle(int u, int prev, const graph & g, std::vector<int> & vizit){
-    if (vizit[u]==1){
-        flag = 1;
-        zam = u;
-        return true;
+bool dfs(int v, const std::vector<Node>&matr) {
+    color[v] = 1;
+    for (int u : matr[v].childId) {
+        if (color[u] == 0) {
+            parent[u] = v;
+            if (dfs(u, matr))
+                return true;
+        } else if (color[u] == 1) {
+            cycle_end = v;
+            cycle_start = u;
+            return true;
+        }
     }
-    vizit[u] = 1;
-    for (int v: g[u]){
-           if ( v!= prev && FindCycle(v, u, g, vizit)){
-               if (u == zam){
-                   flag = 0;
-               }
-               return true;
-           }
-    }
+    color[v] = 2;
     return false;
 }
+
+bool FindCycle(const std::vector<Node>&matr) {
+	int n = matr.size();
+    color.assign(n, 0);
+    parent.assign(n, -1);
+    cycle_start = -1;
+
+    for (int v = 0; v < n; v++) {
+        if (color[v] == 0 && dfs(v, matr))
+            break;
+    }
+
+    if (cycle_start == -1) {
+    	return false;
+    }
+	return true;
+}
+
+#endif

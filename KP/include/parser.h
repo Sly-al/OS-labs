@@ -8,6 +8,10 @@
 #include <sstream>
 
 using graph = std::vector<std::vector<int> >;
+const int NOTREADY = 0;
+const int READY = 1;
+const int INWORKING = 2;
+const int FINISH = 3;
 
 struct Node {
     int id;
@@ -18,7 +22,7 @@ struct Node {
 };
 
 void JsonToVector(const std::string& nameFileJson, std::vector<Node> & vectorOfNodes, std::vector<int>& planning){
-    std::string pathToFile = "/home/alex/Рабочий стол/OS-labs/KP/" + nameFileJson;
+    std::string pathToFile = "/home/alex/Рабочий стол/OS-labs/KP/json/" + nameFileJson +".json";
     std::ifstream file(pathToFile);
     Json::Value actualJson;
     Json::Reader reader;
@@ -42,10 +46,7 @@ void JsonToVector(const std::string& nameFileJson, std::vector<Node> & vectorOfN
        
         vectorOfNodes[j].comToExec = actualJson["Node"+ std::to_string(j)]["comToExec"].asString();
     }
-    // for (int i = 0; i < vectorOfNodes.size(); ++i){
-    //     for (int j = 0; j < vectorOfNodes[i].childrenId.size(); ++j)
-    //     std::cout<< "Id = " << i << ' ' << "Result = " << vectorOfNodes[i].childrenId[j] <<'\n';
-    // }
+
     return;
 
 }
