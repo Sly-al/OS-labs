@@ -1,6 +1,6 @@
-#include <bits/stdc++.h>
+#include <pthread.h>
 #include "parser.h"
-// #include <graph.h>
+#include "graph.h"
 
 pthread_mutex_t mutex;
 
@@ -10,15 +10,17 @@ std::vector<int> planning;
 bool Stop = false;
 
 void* ExecUtilits(void* args){
+    std::cout << "Thrads start\n";
     int amountOfNodes = planning.size();
     int id = ((Node *)args)->id;
-    int childId = ((Node *)args)->childId;
+    std::vector<int> childId = ((Node *)args)->childId;
     std::string comToExec = ((Node *)args)->comToExec;
-
+    
     std::array<char, 128> buffer;
     std::string result;
+    long long er;
 
-    auto pipe = popen(comToExec.c_str(), "r"); // get rid of shared_ptr
+    auto pipe = popen(comToExec.c_str(), "r");
     if (!pipe) throw std::runtime_error("popen() failed!");
     while (!feof(pipe)) {
         if (fgets(buffer.data(), buffer.size(), pipe) != nullptr){
@@ -28,82 +30,88 @@ void* ExecUtilits(void* args){
 
     auto rc = pclose(pipe);
 
-    if (rc == EXIT_SUCCESS) { // == 0
-        std::cout<< "Allright\n";
-    } else {  // EXIT_FAILURE is not used by all programs, maybe needs some adaptation.
-        std::cout<< "Bad\n";
+    if (rc != EXIT_SUCCESS) {
+        er = pthread_mutex_lock(&mutex);
+        if (er){
+            return (void*)er;
+        }
         Stop = true;
+        er = pthread_mutex_unlock(&mutex);
+        if (er){
+            return (void*)er;
+        }
         return NULL;
     }
 
-    long long er;
-    vectorOfNodes[id].arguments = result; // simply check rites to itself
-    
+    vectorOfNodes[id].arguments = result;
+    std::cout<< "Thread end\n";
 
     if (id != amountOfNodes - 1){
-        int amountOfParents = vectorOfNodes[childId].parentId.size() - 1;
-        int countFinish = 0;
-        for (int j: vectorOfNodes[childId].parentId){
-            if (planning[j] == 3){     
-                countFinish++;
+        for(int k: childId){
+            std::cout<< k << '\n';
+            int amountOfParents = vectorOfNodes[k].parentId.size() - 1;
+            int countFinish = 0;
+            for (int j: vectorOfNodes[k].parentId){
+                if (planning[j] == 3){     
+                    countFinish++;
+                }
+                
             }
-        }
-        if (er = pthread_mutex_lock(&mutex)){
-            return (void*)er;
-        }
-        if (amountOfParents == countFinish){
-            planning[childId] = 1;
-        }
-        if (er = pthread_mutex_unlock(&mutex)){
-            return (void*)er;
+            
+            if (amountOfParents == countFinish){
+                er = pthread_mutex_lock(&mutex);
+                if (er){
+                    return (void*)er;
+                }
+                planning[k] = 1;
+                er = pthread_mutex_unlock(&mutex);
+                if (er){
+                    return (void*)er;
+                }
+            }
+            
         }
     }
 
-    
+    std::cout<< "Thread end\n";
     planning[id] = 3;
-    for(int i = 0; i < planning.size(); ++i){
+    for(unsigned long i = 0; i < planning.size(); ++i){
             std::cout << planning[i] << ' ';
         }
     std::cout << '\n';
-    std::cout<< "Thread end\n"; 
+     
     return NULL;
 }
 
-
-// void addChild(std::vector<Node>& vectorOfNodes, int parentId, int selfId, std::string comToExec){
-//     if (parentId != -1){
-//         vectorOfNodes[parentId].parentId.push_back(selfId);    
-//         vectorOfNodes[selfId].parentId = parentId;
-//     }
-//     // std::cout << comToExec << '\n';
-//     vectorOfNodes[selfId].id = selfId;
-//     vectorOfNodes[selfId].comToExec = comToExec;
-//     return;
-// }
-
 int main(){
-    // addChild(vectorOfNodes, -1, 0, "ls");
-    // addChild(vectorOfNodes, 0,  1, "rm -d dir2");
-    // addChild(vectorOfNodes, 0,  2, "> file.txt");
-    // addChild(vectorOfNodes, 1,  3, "mkdir dir2");
-    // addChild(vectorOfNodes, 1,  4, "mkdir dir1");
-    int amountThreads = 2;
+    int amountThreads = 3;
     std::string fileJson = "data.json";
     // std::cout<< "Input amount of threads and file with DAG\n";
     // std::cin >> amountThreads >> fileJson;
-
     JsonToVector(fileJson, vectorOfNodes, planning);
+
+    // int amountOfNodes = planning.size();
+
+    // MakeMatr(vectorOfNodes, matr);
+
+    // for(unsigned long i = 0; i < vectorOfNodes.size(); ++i){
+    //     for (unsigned long j = 0; j < vectorOfNodes[i].parentId.size(); ++j){
+    //         std::cout<< vectorOfNodes[i].parentId[j] << ' ';
+    //     }
+    //     std::cout<< '\n';
+    // }
 
     int amountOfNodes = planning.size();
 
 
-    for (int i = 0; i < vectorOfNodes.size() - 1; ++i){
+
+    for (int i = 0; i < amountOfNodes - 1; ++i){
         if(vectorOfNodes[i].parentId.empty()){
             planning[i] = 1;
         }
     }
 
-    for(int i = 0; i < planning.size(); ++i){
+    for(int i = 0; i < amountOfNodes; ++i){
         std::cout << planning[i] << ' ';
     }
     std::cout << '\n';
@@ -115,13 +123,13 @@ int main(){
 
     while(planning[amountOfNodes - 1] != 1) {
         int countInWork = 0;
-        for (int i = 0; i < planning.size() - 1; ++i){
+        for (int i = 0; i < amountOfNodes - 1; ++i){
             if(planning[i] == 2){
                 countInWork++;
             }
         }
         int dostup = amountThreads - countInWork;
-        for (int i = 0; i < (planning.size() - 1) && dostup > 0; ++i){
+        for (int i = 0; i < (amountOfNodes - 1) && dostup > 0; ++i){
             if(planning[i] == 1){
                 dostup--;
                 planning[i] = 2;
@@ -164,7 +172,7 @@ int main(){
                 }
         }
 
-    for (int i = 0; i < vectorOfNodes.size(); ++i){
+    for (int i = 0; i < amountOfNodes; ++i){
         std::cout<< "Id = " << i << ' ' << "Result = " << vectorOfNodes[i].arguments <<'\n';
     }
     pthread_mutex_destroy(&mutex);

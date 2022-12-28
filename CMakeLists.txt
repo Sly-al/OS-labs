@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25)
 
 project(OS_LABS C CXX)
 
@@ -17,4 +17,5 @@ add_subdirectory(lab3)
 add_subdirectory(lab4)
 add_subdirectory(lab5)
 
+add_subdirectory(KP)
 add_subdirectory(tests)
