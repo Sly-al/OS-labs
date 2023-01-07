@@ -1,0 +1,24 @@
+{
+    "Node0":
+    {
+    "childId" : "1",
+    "comToExec" : "ls"
+    },
+    "Node1":
+    {
+    "childId" : "2 3",
+    "comToExec" : "date"
+    },
+    "Node2":
+    {
+    "childId" : "-1",
+    "comToExec" : "date"
+    }
+    ,
+    "Node3":
+    {
+    "childId" : "0",
+    "comToExec" : "date"
+    }
+}
+

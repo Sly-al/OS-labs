@@ -1,0 +1,23 @@
+{
+    "Node0":
+    {
+    "childId" : "1 2",
+    "comToExec" : "mkdir h"
+    },
+    "Node1":
+    {
+    "childId" : "3",
+    "comToExec" : "touch h/newfile1"
+    },
+    "Node2":
+    {
+    "childId" : "3",
+    "comToExec" : "touch h/newfile2"
+    },
+    "Node3":
+    {
+    "childId" : "-1",
+    "comToExec" : "ls"
+    }
+}
+
